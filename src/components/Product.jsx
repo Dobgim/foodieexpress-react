@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Plus, Star, X } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { FALLBACK_IMAGE, categoryLabel, formatPrice } from '../lib/catalog';
 import { Tilt, ease } from './Motion';
@@ -9,9 +10,7 @@ export function Stars({ rating = 0, size }) {
   return (
     <span className="stars" style={size ? { fontSize: size } : undefined} aria-label={`${rating} out of 5`}>
       {[1, 2, 3, 4, 5].map((i) => (
-        <span key={i} className={i <= Math.round(rating) ? 'star filled' : 'star'}>
-          ★
-        </span>
+        <Star key={i} size="1em" fill="currentColor" strokeWidth={0} className={i <= Math.round(rating) ? 'star filled' : 'star'} />
       ))}
     </span>
   );
@@ -34,7 +33,7 @@ function AddButton({ product, big }) {
       }}
       aria-label={`Add ${product.name} to cart`}
     >
-      {big ? `Add to cart · ${formatPrice(product.price)}` : '+'}
+      {big ? `Add to cart · ${formatPrice(product.price)}` : <Plus size={20} strokeWidth={2.4} />}
     </motion.button>
   );
 }
@@ -103,7 +102,7 @@ export function Modal({ open, onClose, children, className = '' }) {
             transition={{ type: 'spring', stiffness: 260, damping: 24 }}
           >
             <button className="modal-close" onClick={onClose} aria-label="Close">
-              ×
+              <X size={20} />
             </button>
             {children}
           </motion.div>
@@ -161,7 +160,7 @@ export function ProductGrid({ products, scope = 'grid', layout = false }) {
             >
               <motion.div className="modal quick-view" onClick={(e) => e.stopPropagation()}>
                 <button className="modal-close" onClick={() => setActive(null)} aria-label="Close">
-                  ×
+                  <X size={20} />
                 </button>
                 <div className="qv-media">
                   <motion.img

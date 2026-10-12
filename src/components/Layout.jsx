@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-motion';
+import { Clock, Crown, Mail, MapPin, MessageCircle, Phone, Send, ShoppingBag, Store, User, UtensilsCrossed, X } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { Reveal, RevealGroup, RevealItem, ease } from './Motion';
 
@@ -17,7 +18,7 @@ export function Logo() {
   return (
     <Link to="/" className="logo">
       <motion.span className="logo-icon" whileHover={{ rotate: [0, -15, 15, 0], scale: 1.15 }} transition={{ duration: 0.5 }}>
-        🍔
+        <UtensilsCrossed size={20} strokeWidth={2.2} />
       </motion.span>
       <span>
         Foodie<em>Express</em>
@@ -44,19 +45,20 @@ export function Navbar() {
 
   const account =
     user?.role === 'admin'
-      ? { to: '/admin', label: '👑 Admin' }
+      ? { to: '/admin', label: 'Admin', Icon: Crown }
       : user?.role === 'vendor'
-        ? { to: '/vendor', label: '🏪 Vendor' }
+        ? { to: '/vendor', label: 'Vendor', Icon: Store }
         : user
-          ? { to: '#', label: `👤 ${user.name.split(' ')[0]}` }
-          : { to: '/login', label: '👤 Sign in' };
+          ? { to: '#', label: user.name.split(' ')[0], Icon: User }
+          : { to: '/login', label: 'Sign in', Icon: User };
+  const AccountIcon = account.Icon;
 
   const onAccount = (e) => {
     if (user?.role === 'user') {
       e.preventDefault();
       if (confirm('Logout of your account?')) {
         logout();
-        toast('Logged out. See you soon! 👋');
+        toast('You have been logged out.');
       }
     }
   };
@@ -84,7 +86,7 @@ export function Navbar() {
         <div className="nav-actions">
           <Link to="/cart" className="nav-cart" data-cart-icon aria-label="Cart">
             <motion.span key={cartPulse} animate={{ scale: [1, 1.45, 0.9, 1], rotate: [0, -14, 10, 0] }} transition={{ duration: 0.5 }}>
-              🛒
+              <ShoppingBag size={20} strokeWidth={1.8} />
             </motion.span>
             <AnimatePresence>
               {cartCount > 0 && (
@@ -102,6 +104,7 @@ export function Navbar() {
             </AnimatePresence>
           </Link>
           <Link to={account.to} onClick={onAccount} className="nav-account">
+            <AccountIcon size={16} strokeWidth={2} />
             {account.label}
           </Link>
           <button className={`nav-toggle ${open ? 'active' : ''}`} onClick={() => setOpen((o) => !o)} aria-label="Menu">
@@ -131,7 +134,7 @@ export function Navbar() {
               ))}
               <RevealItem variant="zoomIn">
                 <Link to={account.to} onClick={onAccount} className="mobile-link small">
-                  {account.label}
+                  <AccountIcon size={18} /> {account.label}
                 </Link>
               </RevealItem>
             </RevealGroup>
@@ -187,15 +190,23 @@ export function Footer() {
           </RevealItem>
           <RevealItem className="footer-col">
             <h4>Contact</h4>
-            <span>📍 123 Food Street, Flavor City</span>
-            <span>📞 +1 (555) 123-4567</span>
-            <span>✉️ hello@foodieexpress.com</span>
-            <span>⏰ Open: 8AM – 11PM</span>
+            <span className="footer-contact">
+              <MapPin size={16} /> 123 Food Street, Flavor City
+            </span>
+            <span className="footer-contact">
+              <Phone size={16} /> +1 (555) 123-4567
+            </span>
+            <span className="footer-contact">
+              <Mail size={16} /> hello@foodieexpress.com
+            </span>
+            <span className="footer-contact">
+              <Clock size={16} /> Open daily, 8 AM – 11 PM
+            </span>
           </RevealItem>
         </RevealGroup>
         <div className="footer-bottom">
           <p>© 2026 FoodieExpress. All rights reserved.</p>
-          <p>Made with ❤️ and lots of good food</p>
+          <p>Fresh food, delivered across Douala.</p>
         </div>
       </div>
     </footer>
@@ -247,7 +258,7 @@ export function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([
-    { from: 'bot', text: 'Hi there! 👋 Welcome to FoodieExpress! How can we help you today? Anything delicious on your mind?' },
+    { from: 'bot', text: 'Hi, welcome to FoodieExpress. How can we help you today?' },
   ]);
   const bodyRef = useRef(null);
 
@@ -291,7 +302,7 @@ export function ChatWidget() {
                 </span>
               </div>
               <button onClick={() => setOpen(false)} aria-label="Close chat">
-                ×
+                <X size={18} />
               </button>
             </div>
             <div className="chat-body" ref={bodyRef}>
@@ -310,7 +321,7 @@ export function ChatWidget() {
             <div className="chat-footer">
               <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && send()} placeholder="Type a message..." />
               <button onClick={send} aria-label="Send">
-                ➤
+                <Send size={18} />
               </button>
             </div>
           </motion.div>
@@ -323,7 +334,7 @@ export function ChatWidget() {
         whileHover={{ scale: 1.1 }}
         aria-label="Chat with support"
       >
-        {open ? '×' : '💬'}
+        {open ? <X size={24} /> : <MessageCircle size={24} />}
       </motion.button>
       <motion.a
         href="https://wa.me/237670874649?text=Hello%20FoodieExpress!"

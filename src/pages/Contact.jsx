@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import L from 'leaflet';
+import { Clock, Mail, MapPin, Phone } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { HQ_POS } from '../lib/catalog';
 import { PageTransition } from '../components/Overlays';
 import { PageHeader } from '../components/Layout';
-import { LeafletMap, emojiIcon } from '../components/LeafletMap';
+import { LeafletMap, mapIcon } from '../components/LeafletMap';
 import { Reveal, RevealGroup, RevealItem } from '../components/Motion';
 
 const CARDS = [
-  ['📍', 'Visit us', '123 Food Street, Flavor City, FC 12345'],
-  ['📞', 'Call us', '+1 (555) 123-4567'],
-  ['✉️', 'Email us', 'hello@foodieexpress.com'],
-  ['⏰', 'Working hours', 'Mon – Sun: 8:00 AM – 11:00 PM'],
+  [MapPin, 'Visit us', '123 Food Street, Flavor City, FC 12345'],
+  [Phone, 'Call us', '+1 (555) 123-4567'],
+  [Mail, 'Email us', 'hello@foodieexpress.com'],
+  [Clock, 'Working hours', 'Mon – Sun: 8:00 AM – 11:00 PM'],
 ];
 
 export default function Contact() {
@@ -24,7 +25,7 @@ export default function Contact() {
   const submit = (e) => {
     e.preventDefault();
     if (!form.name.trim() || !form.email.trim() || !form.message.trim()) return toast('Please fill in all required fields.', 'error');
-    toast("Message sent successfully! We'll get back to you soon. 📧");
+    toast("Message sent. We'll get back to you soon.");
     setForm(empty);
   };
 
@@ -34,11 +35,11 @@ export default function Contact() {
       <section className="section pt-0">
         <div className="container contact-layout">
           <RevealGroup className="contact-cards" stagger={0.1}>
-            {CARDS.map(([icon, title, text]) => (
+            {CARDS.map(([Icon, title, text]) => (
               <RevealItem key={title} variant="left">
                 <motion.div className="contact-card" whileHover={{ x: 8, scale: 1.02 }}>
-                  <motion.span className="cc-icon" whileHover={{ rotate: 20, scale: 1.2 }}>
-                    {icon}
+                  <motion.span className="cc-icon" whileHover={{ scale: 1.08 }}>
+                    <Icon size={22} strokeWidth={1.8} />
                   </motion.span>
                   <div>
                     <h3>{title}</h3>
@@ -50,7 +51,7 @@ export default function Contact() {
           </RevealGroup>
 
           <Reveal as="form" variant="zoomIn" className="card" onSubmit={submit}>
-            <h2 className="heading-sm">📧 Send us a message</h2>
+            <h2 className="heading-sm">Send us a message</h2>
             <div className="form-grid">
               <div className="form-group">
                 <label htmlFor="c-name">Your name *</label>
@@ -70,7 +71,7 @@ export default function Contact() {
               </div>
             </div>
             <motion.button type="submit" className="btn btn-primary btn-lg btn-block" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.96 }}>
-              Send message 📨
+              Send message
             </motion.button>
           </Reveal>
         </div>
@@ -80,7 +81,7 @@ export default function Contact() {
               className="map map-contact"
               zoom={14}
               onReady={(map) => {
-                L.marker(HQ_POS, { icon: emojiIcon('🍔', 34) }).addTo(map).bindPopup('<b>FoodieExpress Kitchen</b><br>Come say hi!').openPopup();
+                L.marker(HQ_POS, { icon: mapIcon('kitchen', 42) }).addTo(map).bindPopup('<b>FoodieExpress Kitchen</b><br>Come say hi!').openPopup();
               }}
             />
           </Reveal>

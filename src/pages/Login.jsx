@@ -47,7 +47,7 @@ export default function Login() {
     if (!email || !password) return toast('Please fill in all fields.', 'error');
     const r = login(email, password);
     if (!r.ok) return toast(r.message, r.type);
-    toast(`Welcome back, ${r.user.name}! 🎉`);
+    toast(`Welcome back, ${r.user.name}.`);
     setTimeout(() => navigate(r.user.role === 'admin' ? '/admin' : r.user.role === 'vendor' ? '/vendor' : '/'), 700);
   };
 
@@ -60,7 +60,7 @@ export default function Login() {
     if (password.length < 6) return toast('Password must be at least 6 characters.', 'error');
     const r = register({ name, email, password });
     if (!r.ok) return toast(r.message, 'error');
-    toast('Account created! You can now sign in. 🎉');
+    toast('Account created. You can now sign in.');
     setLoginForm({ email, password: '' });
     setTab('login');
   };
@@ -72,7 +72,7 @@ export default function Login() {
     if (data.password.length < 6) return toast('Password must be at least 6 characters.', 'error');
     const r = registerVendor(data);
     if (!r.ok) return toast(r.message, 'error');
-    toast('Application sent! You will be notified when approved. 📋');
+    toast('Application sent. We will notify you once it is approved.');
     setVendorForm(blankVendor);
     setTimeout(() => setTab('login'), 1500);
   };
@@ -114,7 +114,7 @@ export default function Login() {
             <AnimatePresence mode="wait">
               {tab === 'login' && (
                 <motion.form key="login" {...formAnim} onSubmit={onLogin}>
-                  <h2>Welcome back 👋</h2>
+                  <h2>Welcome back</h2>
                   <p className="muted">Sign in to continue your delicious journey.</p>
                   <Field id="l-email" label="Email" type="email" placeholder="you@example.com" {...lf('email')} />
                   <Field id="l-pass" label="Password" type="password" placeholder="••••••••" {...lf('password')} />
@@ -128,7 +128,7 @@ export default function Login() {
               )}
               {tab === 'register' && (
                 <motion.form key="register" {...formAnim} onSubmit={onRegister}>
-                  <h2>Create account 🍔</h2>
+                  <h2>Create an account</h2>
                   <p className="muted">Join thousands of food lovers.</p>
                   <Field id="r-name" label="Full name" placeholder="John Doe" {...rf('name')} />
                   <Field id="r-email" label="Email" type="email" placeholder="you@example.com" {...rf('email')} />
@@ -140,7 +140,7 @@ export default function Login() {
               )}
               {tab === 'vendor' && (
                 <motion.form key="vendor" {...formAnim} onSubmit={onVendor}>
-                  <h2>Become a vendor 🏪</h2>
+                  <h2>Become a vendor</h2>
                   <p className="muted">Apply to sell on FoodieExpress. An admin will review your application.</p>
                   <Field id="v-name" label="Restaurant name" placeholder="Mama's Kitchen" {...vf('name')} />
                   <div className="form-grid">

@@ -164,7 +164,7 @@ export function StoreProvider({ children }) {
     } else {
       setCartPulse((n) => n + 1);
     }
-    toast('Added to cart! 🛒');
+    toast('Added to cart');
   };
   const landFlight = (id) => {
     setFlights((f) => f.filter((x) => x.id !== id));

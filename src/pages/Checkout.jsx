@@ -2,17 +2,18 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import L from 'leaflet';
+import { Bike, Check, Lock, ShoppingBag, Store } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { DELIVERY_FEE, HQ_POS, formatPrice } from '../lib/catalog';
 import { PageTransition } from '../components/Overlays';
 import { PageHeader } from '../components/Layout';
 import { Modal, onImgError } from '../components/Product';
-import { LeafletMap, emojiIcon, geocode } from '../components/LeafletMap';
+import { LeafletMap, geocode, mapIcon } from '../components/LeafletMap';
 import { Reveal, RevealGroup, RevealItem } from '../components/Motion';
 import { AnimatedNumber } from './Cart';
 
 function Confetti() {
-  const bits = ['🎉', '🍔', '🍕', '✨', '🥤', '🍰', '⭐', '🍗'];
+  const colors = ['#c8102e', '#e9a23b', '#2f7d4f', '#1d1411'];
   return (
     <div className="confetti" aria-hidden="true">
       {Array.from({ length: 18 }).map((_, i) => {
@@ -23,9 +24,8 @@ function Confetti() {
             initial={{ x: 0, y: 0, scale: 0, opacity: 1 }}
             animate={{ x: Math.cos(angle) * 220, y: Math.sin(angle) * 180, scale: [0, 1.4, 1], opacity: [1, 1, 0], rotate: 360 }}
             transition={{ duration: 1.6, ease: 'easeOut', delay: 0.15 }}
-          >
-            {bits[i % bits.length]}
-          </motion.span>
+            style={{ background: colors[i % colors.length] }}
+          />
         );
       })}
     </div>
@@ -37,7 +37,7 @@ export default function Checkout() {
   const navigate = useNavigate();
   const [method, setMethod] = useState('delivery');
   const [form, setForm] = useState({ name: user?.name || '', phone: '', email: user?.email || '', address: '' });
-  const [mapStatus, setMapStatus] = useState({ text: '📍 Type your address to see it on the map', tone: '' });
+  const [mapStatus, setMapStatus] = useState({ text: 'Type your address to see it on the map', tone: '' });
   const [placed, setPlaced] = useState(null);
   const mapRef = useRef({});
 
@@ -56,8 +56,8 @@ export default function Checkout() {
     const m = mapRef.current;
     if (!m.map) return;
     if (m.customer) m.customer.setLatLng(pos);
-    else m.customer = L.marker(pos, { icon: emojiIcon('📍', 28, true) }).addTo(m.map);
-    m.customer.bindPopup('<b>📦 Your delivery location</b>').openPopup();
+    else m.customer = L.marker(pos, { icon: mapIcon('home', 36) }).addTo(m.map);
+    m.customer.bindPopup('<b>Your delivery location</b>').openPopup();
     if (m.route) m.map.removeLayer(m.route);
     m.route = L.polyline([HQ_POS, pos], { color: '#E63946', weight: 3, dashArray: '8, 8', opacity: 0.8 }).addTo(m.map);
     m.map.flyToBounds(L.latLngBounds([HQ_POS, pos]), { padding: [40, 40], maxZoom: 15, duration: 1.2 });
@@ -73,18 +73,18 @@ export default function Checkout() {
   useEffect(() => {
     const q = form.address.trim();
     if (q.length < 4) {
-      setMapStatus({ text: '📍 Type your address to see it on the map', tone: '' });
+      setMapStatus({ text: 'Type your address to see it on the map', tone: '' });
       return;
     }
-    setMapStatus({ text: '🔍 Locating your address…', tone: '' });
+    setMapStatus({ text: 'Locating your address…', tone: '' });
     const t = setTimeout(async () => {
       try {
         const r = await geocode(q);
-        if (!r) return setMapStatus({ text: "⚠️ Could not pinpoint address — we'll still deliver!", tone: 'warn' });
+        if (!r) return setMapStatus({ text: "We couldn't pinpoint that address, but we'll still deliver.", tone: 'warn' });
         placeCustomer(r.pos);
-        setMapStatus({ text: `✅ Address found — ${r.name.split(',').slice(0, 2).join(',')}`, tone: 'ok' });
+        setMapStatus({ text: `Address found: ${r.name.split(',').slice(0, 2).join(',')}`, tone: 'ok' });
       } catch {
-        setMapStatus({ text: '⚠️ Map service unavailable', tone: 'warn' });
+        setMapStatus({ text: 'Map service unavailable', tone: 'warn' });
       }
     }, 1200);
     return () => clearTimeout(t);
@@ -97,7 +97,7 @@ export default function Checkout() {
     if (method === 'delivery' && !address.trim()) return toast('Please enter your delivery address.', 'error');
     const order = createOrder({ name: name.trim(), phone: phone.trim(), email: email.trim(), address: address.trim() }, method);
     setPlaced(order);
-    toast('Order placed successfully! 🎉');
+    toast('Order placed successfully.');
   };
 
   const field = (key) => ({ value: form[key], onChange: (e) => setForm((f) => ({ ...f, [key]: e.target.value })) });
@@ -109,7 +109,7 @@ export default function Checkout() {
         <section className="section pt-0">
           <div className="container">
             <motion.div className="empty-state" initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }}>
-              <span>{allowed ? '🛒' : '🔐'}</span>
+              <span>{allowed ? <ShoppingBag size={56} strokeWidth={1.4} /> : <Lock size={56} strokeWidth={1.4} />}</span>
               <h3>{allowed ? 'Nothing to check out' : 'Please sign in first'}</h3>
               <p>{allowed ? 'Your cart is empty. Add some delicious items first!' : 'Only registered customers can place orders. Redirecting you to sign in…'}</p>
               <Link to={allowed ? '/menu' : '/login'} className="btn btn-primary btn-lg">
@@ -131,9 +131,9 @@ export default function Checkout() {
             <h3>Delivery method</h3>
             <div className="method-toggle">
               {[
-                ['delivery', '🛵', 'Delivery', `${formatPrice(DELIVERY_FEE)} · 30-45 min`],
-                ['pickup', '🏪', 'Pickup', 'Free · 15-20 min'],
-              ].map(([id, icon, label, sub]) => (
+                ['delivery', Bike, 'Delivery', `${formatPrice(DELIVERY_FEE)} · 30-45 min`],
+                ['pickup', Store, 'Pickup', 'Free · 15-20 min'],
+              ].map(([id, Icon, label, sub]) => (
                 <motion.button
                   type="button"
                   key={id}
@@ -142,7 +142,9 @@ export default function Checkout() {
                   whileTap={{ scale: 0.95 }}
                 >
                   {method === id && <motion.span layoutId="method-bg" className="method-bg" />}
-                  <span className="method-icon">{icon}</span>
+                  <span className="method-icon">
+                    <Icon size={24} strokeWidth={1.8} />
+                  </span>
                   <strong>{label}</strong>
                   <small>{sub}</small>
                 </motion.button>
@@ -178,9 +180,9 @@ export default function Checkout() {
                 className="map map-checkout"
                 onReady={(map) => {
                   mapRef.current.map = map;
-                  L.marker(HQ_POS, { icon: emojiIcon('🍔', 28) })
+                  L.marker(HQ_POS, { icon: mapIcon('kitchen', 36) })
                     .addTo(map)
-                    .bindPopup('<b>🏪 FoodieExpress Kitchen</b><br>Your food is prepared here!')
+                    .bindPopup('<b>FoodieExpress Kitchen</b><br>Your food is prepared here.')
                     .openPopup();
                 }}
               />
@@ -225,7 +227,7 @@ export default function Checkout() {
       <Modal open={!!placed} onClose={() => navigate('/')} className="success-modal">
         <Confetti />
         <motion.div className="success-icon" initial={{ scale: 0, rotate: -90 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', delay: 0.2 }}>
-          ✓
+          <Check size={40} strokeWidth={2.5} />
         </motion.div>
         <h2>Order placed!</h2>
         <p>Your food is being prepared. Save this tracking code:</p>
@@ -234,7 +236,7 @@ export default function Checkout() {
         </motion.div>
         <div className="modal-actions">
           <Link to={`/tracking?code=${placed?.trackingCode}`} className="btn btn-primary">
-            Track order 📦
+            Track order
           </Link>
           <Link to="/" className="btn btn-ghost">
             Back home

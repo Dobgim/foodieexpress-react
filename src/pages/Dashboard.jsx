@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Bike, Check, ClipboardList, Crown, Hourglass, House, LayoutDashboard, LogOut, Menu, Store, UtensilsCrossed, Wallet, X } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { CATEGORIES, ORDER_STATUSES, formatPrice, statusInfo } from '../lib/catalog';
 import { PageTransition } from '../components/Overlays';
@@ -166,7 +167,7 @@ export default function Dashboard({ role }) {
           })();
       const id = editing && editing !== 'new' ? editing.id : undefined;
       await saveProduct({ id, ...fields, ...owner });
-      toast(id ? 'Product updated!' : 'Product added! 🎉');
+      toast(id ? 'Product updated.' : 'Product added.');
     } catch (err) {
       toast('Error: ' + (err.message || 'could not save product'), 'error');
       throw err;
@@ -184,22 +185,22 @@ export default function Dashboard({ role }) {
   };
 
   const panels = [
-    ['dashboard', '📊', 'Dashboard'],
-    ['products', '🍕', isAdmin ? 'Products' : 'My Products'],
-    ['orders', '📋', 'Orders'],
+    ['dashboard', LayoutDashboard, 'Dashboard'],
+    ['products', UtensilsCrossed, isAdmin ? 'Products' : 'My Products'],
+    ['orders', ClipboardList, 'Orders'],
     ...(isAdmin
       ? [
-          ['tracking', '🛵', 'Tracking'],
-          ['vendors', '🏪', 'Vendors', pendingVendors],
+          ['tracking', Bike, 'Tracking'],
+          ['vendors', Store, 'Vendors', pendingVendors],
         ]
       : []),
   ];
 
   const stats = [
-    ['🍕', isAdmin ? 'Total products' : 'My products', myProducts.length, 'red'],
-    ['📋', 'Total orders', myOrders.length, 'green'],
-    ['💰', isAdmin ? 'Total revenue' : 'My revenue', revenue, 'orange', true],
-    ['⏳', 'Pending orders', pending, 'blue'],
+    [UtensilsCrossed, isAdmin ? 'Total products' : 'My products', myProducts.length, 'red'],
+    [ClipboardList, 'Total orders', myOrders.length, 'green'],
+    [Wallet, isAdmin ? 'Total revenue' : 'My revenue', revenue, 'orange', true],
+    [Hourglass, 'Pending orders', pending, 'blue'],
   ];
 
   const orderRow = (o, withSelect = true) => ({
@@ -211,7 +212,7 @@ export default function Dashboard({ role }) {
         <br />
         <span className="muted small">{o.customer.email}</span>
       </>,
-      o.deliveryMethod === 'delivery' ? '🏠 Delivery' : '🏪 Pickup',
+      o.deliveryMethod === 'delivery' ? 'Delivery' : 'Pickup',
       myItems(o)
         .map((i) => `${i.quantity}× ${i.name}`)
         .join(', '),
@@ -225,9 +226,11 @@ export default function Dashboard({ role }) {
       <div className="dash">
         <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
           <Logo />
-          <span className="role-chip">{isAdmin ? '👑 Admin' : `🏪 ${user.name}`}</span>
+          <span className="role-chip">
+            {isAdmin ? <Crown size={14} /> : <Store size={14} />} {isAdmin ? 'Admin' : user.name}
+          </span>
           <nav>
-            {panels.map(([id, icon, label, count]) => (
+            {panels.map(([id, Icon, label, count]) => (
               <button
                 key={id}
                 className={`side-link ${panel === id ? 'active' : ''}`}
@@ -238,7 +241,7 @@ export default function Dashboard({ role }) {
               >
                 {panel === id && <motion.span layoutId="side-bg" className="side-bg" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />}
                 <span className="side-text">
-                  {icon} {label}
+                  <Icon size={18} strokeWidth={1.8} /> {label}
                 </span>
                 {count > 0 && <span className="side-count">{count}</span>}
               </button>
@@ -246,7 +249,9 @@ export default function Dashboard({ role }) {
           </nav>
           <div className="side-bottom">
             <Link to="/" className="side-link">
-              <span className="side-text">🏠 View site</span>
+              <span className="side-text">
+                <House size={18} strokeWidth={1.8} /> View site
+              </span>
             </Link>
             <button
               className="side-link"
@@ -255,15 +260,17 @@ export default function Dashboard({ role }) {
                 navigate('/login');
               }}
             >
-              <span className="side-text">🚪 Logout</span>
+              <span className="side-text">
+                <LogOut size={18} strokeWidth={1.8} /> Log out
+              </span>
             </button>
           </div>
         </aside>
 
         <div className="dash-main">
           <div className="dash-top">
-            <button className="btn btn-ghost sm dash-menu" onClick={() => setSidebarOpen((o) => !o)}>
-              ☰
+            <button className="btn btn-ghost sm dash-menu" onClick={() => setSidebarOpen((o) => !o)} aria-label="Toggle sidebar">
+              <Menu size={20} />
             </button>
             <span className={`mode-chip ${online ? 'on' : ''}`}>{online ? '● Live database' : '● Local mode (Supabase offline)'}</span>
           </div>
@@ -280,7 +287,7 @@ export default function Dashboard({ role }) {
                 <>
                   <h1 className="heading">{isAdmin ? 'Dashboard' : `Welcome back, ${user.name}!`}</h1>
                   <div className="stat-cards">
-                    {stats.map(([icon, label, value, color, money], i) => (
+                    {stats.map(([Icon, label, value, color, money], i) => (
                       <motion.div
                         key={label}
                         className="stat-card"
@@ -296,7 +303,9 @@ export default function Dashboard({ role }) {
                           </div>
                           <div className="stat-label">{label}</div>
                         </div>
-                        <span className={`stat-icon ${color}`}>{icon}</span>
+                        <span className={`stat-icon ${color}`}>
+                          <Icon size={22} strokeWidth={1.8} />
+                        </span>
                       </motion.div>
                     ))}
                   </div>
@@ -425,10 +434,10 @@ export default function Dashboard({ role }) {
                                 className="btn-sm edit"
                                 onClick={() => {
                                   setVendorStatus(v.id, 'approved');
-                                  toast(`${v.name} has been approved! 🎉`);
+                                  toast(`${v.name} has been approved.`);
                                 }}
                               >
-                                ✅ Approve
+                                <Check size={14} /> Approve
                               </button>
                             )}
                             {v.status === 'pending' && (
@@ -440,7 +449,7 @@ export default function Dashboard({ role }) {
                                   toast(`${v.name} has been rejected.`, 'info');
                                 }}
                               >
-                                ❌ Reject
+                                <X size={14} /> Reject
                               </button>
                             )}
                             {v.status === 'approved' && <span className="muted small">Active</span>}

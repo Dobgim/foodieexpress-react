@@ -45,17 +45,17 @@ export const CATALOG = [
 ];
 
 export const CATEGORIES = [
-  { id: 'meals', name: 'Meals', icon: '🍛', image: img('1588166524941-3bf61a9c41db', 500, 500) },
-  { id: 'fast-food', name: 'Fast Food', icon: '🍔', image: img('1568901346375-23c9450c58cd', 500, 500) },
-  { id: 'drinks', name: 'Drinks', icon: '🥤', image: img('1497534446932-c925b458314e', 500, 500) },
-  { id: 'desserts', name: 'Desserts', icon: '🍰', image: img('1624353365286-3f8d62daad51', 500, 500) },
+  { id: 'meals', name: 'Meals', image: img('1588166524941-3bf61a9c41db', 500, 500) },
+  { id: 'fast-food', name: 'Fast Food', image: img('1568901346375-23c9450c58cd', 500, 500) },
+  { id: 'drinks', name: 'Drinks', image: img('1497534446932-c925b458314e', 500, 500) },
+  { id: 'desserts', name: 'Desserts', image: img('1624353365286-3f8d62daad51', 500, 500) },
 ];
 
 export const ORDER_STATUSES = [
-  { id: 'received', label: 'Order Received', short: 'Received', icon: '📝', badge: 'warning' },
-  { id: 'preparing', label: 'Preparing Food', short: 'Preparing', icon: '👨‍🍳', badge: 'info' },
-  { id: 'out-for-delivery', label: 'Out for Delivery', short: 'Out for Delivery', icon: '🛵', badge: 'primary' },
-  { id: 'delivered', label: 'Delivered', short: 'Delivered', icon: '✅', badge: 'success' },
+  { id: 'received', label: 'Order Received', short: 'Received', badge: 'warning' },
+  { id: 'preparing', label: 'Preparing Food', short: 'Preparing', badge: 'info' },
+  { id: 'out-for-delivery', label: 'Out for Delivery', short: 'Out for Delivery', badge: 'primary' },
+  { id: 'delivered', label: 'Delivered', short: 'Delivered', badge: 'success' },
 ];
 
 export const statusInfo = (id) => ORDER_STATUSES.find((s) => s.id === id) || { id, label: id, short: id, badge: 'info' };

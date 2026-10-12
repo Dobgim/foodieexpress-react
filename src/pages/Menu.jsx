@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Search, UtensilsCrossed, X } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { CATEGORIES, categoryLabel } from '../lib/catalog';
 import { PageTransition } from '../components/Overlays';
@@ -8,7 +9,7 @@ import { PageHeader } from '../components/Layout';
 import { ProductGrid } from '../components/Product';
 import { Reveal } from '../components/Motion';
 
-const FILTERS = [{ id: 'all', name: 'All', icon: '🍽️' }, ...CATEGORIES];
+const FILTERS = [{ id: 'all', name: 'All' }, ...CATEGORIES];
 
 export default function Menu() {
   const { products, loading } = useStore();
@@ -51,12 +52,12 @@ export default function Menu() {
         <div className="container">
           <Reveal variant="zoomIn" className="menu-toolbar">
             <div className="search-box">
-              <span>🔍</span>
+              <Search size={18} className="search-icon" />
               <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search dishes, drinks, vendors…" />
               <AnimatePresence>
                 {search && (
                   <motion.button initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} onClick={() => setSearch('')} aria-label="Clear search">
-                    ×
+                    <X size={16} />
                   </motion.button>
                 )}
               </AnimatePresence>
@@ -76,7 +77,7 @@ export default function Menu() {
               <button key={f.id} className={`pill ${category === f.id ? 'active' : ''}`} onClick={() => setCategory(f.id)}>
                 {category === f.id && <motion.span layoutId="pill-bg" className="pill-bg" transition={{ type: 'spring', stiffness: 400, damping: 30 }} />}
                 <span className="pill-text">
-                  {f.icon} {f.name}
+                  {f.name}
                 </span>
               </button>
             ))}
@@ -93,7 +94,7 @@ export default function Menu() {
           ) : (
             <motion.div className="empty-state" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}>
               <motion.span animate={{ rotate: [0, -10, 10, 0] }} transition={{ duration: 2, repeat: Infinity }}>
-                🍽️
+                <UtensilsCrossed size={56} strokeWidth={1.4} />
               </motion.span>
               <h3>No items found</h3>
               <p>Try a different search or category.</p>

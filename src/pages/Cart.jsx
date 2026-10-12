@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowRight, ShoppingBag, Trash2 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { DELIVERY_FEE, formatPrice } from '../lib/catalog';
 import { PageTransition } from '../components/Overlays';
@@ -37,12 +38,12 @@ export default function Cart() {
             {cartLines.length === 0 ? (
               <motion.div key="empty" className="empty-state" initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.7 }}>
                 <motion.span animate={{ y: [0, -12, 0] }} transition={{ duration: 2, repeat: Infinity }}>
-                  🛒
+                  <ShoppingBag size={56} strokeWidth={1.4} />
                 </motion.span>
                 <h3>Your cart is empty</h3>
                 <p>Looks like you haven't added anything yet.</p>
                 <Link to="/menu" className="btn btn-primary btn-lg">
-                  Browse menu 🍕
+                  Browse the menu
                 </Link>
               </motion.div>
             ) : (
@@ -87,7 +88,7 @@ export default function Cart() {
                             }}
                             aria-label="Remove item"
                           >
-                            🗑️
+                            <Trash2 size={18} />
                           </motion.button>
                         </div>
                       </motion.div>
@@ -110,7 +111,7 @@ export default function Cart() {
                     <AnimatedNumber value={formatPrice(cartTotal + fee)} />
                   </div>
                   <Link to="/checkout" className="btn btn-primary btn-lg btn-block">
-                    Proceed to checkout →
+                    Proceed to checkout <ArrowRight size={18} />
                   </Link>
                   <button
                     className="link-btn"

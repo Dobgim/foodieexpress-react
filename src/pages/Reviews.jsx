@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { MessageCircle, Star, Utensils } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { PageTransition } from '../components/Overlays';
 import { PageHeader } from '../components/Layout';
@@ -23,7 +24,7 @@ export default function Reviews() {
     addReview({ name: form.name.trim(), avatar: form.name.trim()[0].toUpperCase(), rating, comment: form.comment.trim(), product: form.product.trim() });
     setForm({ name: '', comment: '', product: '' });
     setRating(0);
-    toast('Review submitted! Thank you! ⭐');
+    toast('Review submitted. Thank you.');
   };
 
   const field = (key) => ({ value: form[key], onChange: (e) => setForm((f) => ({ ...f, [key]: e.target.value })) });
@@ -44,7 +45,9 @@ export default function Reviews() {
             <div className="bars">
               {[5, 4, 3, 2, 1].map((s) => (
                 <div key={s} className="bar-row">
-                  <span>{s} ★</span>
+                  <span className="bar-label">
+                    {s} <Star size={12} fill="currentColor" strokeWidth={0} />
+                  </span>
                   <div className="bar">
                     <motion.div
                       className="bar-fill"
@@ -61,7 +64,7 @@ export default function Reviews() {
           </Reveal>
 
           <Reveal as="form" variant="right" className="card review-form" onSubmit={submit}>
-            <h3>✍️ Write a review</h3>
+            <h3>Write a review</h3>
             <div className="star-select" onMouseLeave={() => setHover(0)}>
               {[1, 2, 3, 4, 5].map((s) => (
                 <motion.button
@@ -75,7 +78,7 @@ export default function Reviews() {
                   animate={rating >= s ? { scale: [1, 1.4, 1] } : { scale: 1 }}
                   aria-label={`${s} star${s > 1 ? 's' : ''}`}
                 >
-                  ★
+                  <Star size={30} fill="currentColor" strokeWidth={0} />
                 </motion.button>
               ))}
             </div>
@@ -92,7 +95,7 @@ export default function Reviews() {
               <textarea id="r-comment" className="input" rows={4} placeholder="Tell us about your experience…" {...field('comment')} />
             </div>
             <motion.button type="submit" className="btn btn-primary btn-block" whileTap={{ scale: 0.96 }}>
-              Submit review ⭐
+              Submit review
             </motion.button>
           </Reveal>
         </div>
@@ -100,7 +103,9 @@ export default function Reviews() {
         <div className="container">
           {reviews.length === 0 ? (
             <Reveal variant="zoomIn" className="empty-state small">
-              <span>💬</span>
+              <span>
+                <MessageCircle size={48} strokeWidth={1.4} />
+              </span>
               <h3>No reviews yet</h3>
               <p>Be the first to share your experience!</p>
             </Reveal>
@@ -126,7 +131,9 @@ export default function Reviews() {
                     </div>
                     <Stars rating={r.rating} />
                     <p>“{r.comment}”</p>
-                    {r.product && <span className="chip">🍽️ {r.product}</span>}
+                    {r.product && <span className="chip">
+                        <Utensils size={13} /> {r.product}
+                      </span>}
                   </motion.div>
                 ))}
               </AnimatePresence>

@@ -1,20 +1,23 @@
-import { useEffect, useRef, useState } from 'react';
+import { createElement, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import L from 'leaflet';
+import { Bike, Check, ChefHat, ClipboardList, PackageCheck, Search, Timer } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { HQ_POS, ORDER_STATUSES, formatPrice, statusInfo } from '../lib/catalog';
 import { PageTransition } from '../components/Overlays';
 import { PageHeader } from '../components/Layout';
-import { LeafletMap, emojiIcon, geocode } from '../components/LeafletMap';
+import { LeafletMap, geocode, mapIcon } from '../components/LeafletMap';
 import { Reveal, ease } from '../components/Motion';
+
+const STATUS_ICONS = { received: ClipboardList, preparing: ChefHat, 'out-for-delivery': Bike, delivered: PackageCheck };
 
 function TrackingMap({ order }) {
   const [label, setLabel] = useState('');
 
   return (
     <div className="card">
-      <h3>🗺️ Live map</h3>
+      <h3>Live map</h3>
       <LeafletMap
         key={order.id + order.status}
         className="map map-tracking"
@@ -23,7 +26,7 @@ function TrackingMap({ order }) {
           let cancelled = false;
           if (order.deliveryMethod === 'pickup') {
             setLabel('Pickup at FoodieExpress Headquarters');
-            L.marker(HQ_POS, { icon: emojiIcon('🏪') }).addTo(map).bindPopup('<b>FoodieExpress HQ</b><br>Ready for pickup.').openPopup();
+            L.marker(HQ_POS, { icon: mapIcon('store') }).addTo(map).bindPopup('<b>FoodieExpress HQ</b><br>Ready for pickup.').openPopup();
             map.setView(HQ_POS, 15);
             return;
           }
@@ -33,16 +36,16 @@ function TrackingMap({ order }) {
             .then((r) => {
               if (cancelled) return;
               const dest = r?.pos || [4.055, 9.71];
-              L.marker(dest, { icon: emojiIcon('📍', 30, true) }).addTo(map).bindPopup(`<b>Destination</b><br>${order.customer.address}`);
+              L.marker(dest, { icon: mapIcon('home') }).addTo(map).bindPopup(`<b>Destination</b><br>${order.customer.address}`);
               L.polyline([HQ_POS, dest], { color: '#E63946', weight: 4, dashArray: '8, 8', opacity: 0.6 }).addTo(map);
               map.fitBounds(L.latLngBounds([HQ_POS, dest]), { padding: [40, 40] });
 
               if (order.status === 'received' || order.status === 'preparing') {
                 setLabel(`Food is being prepared… Destination: ${order.customer.address}`);
-                L.marker(HQ_POS, { icon: emojiIcon('🏪') }).addTo(map).bindPopup('<b>Preparing food at HQ</b>').openPopup();
+                L.marker(HQ_POS, { icon: mapIcon('store') }).addTo(map).bindPopup('<b>Preparing food at HQ</b>').openPopup();
               } else if (order.status === 'out-for-delivery') {
                 setLabel(`Rider is on the way to: ${order.customer.address}`);
-                const rider = L.marker(HQ_POS, { icon: emojiIcon('🛵', 34) }).addTo(map).bindPopup('<b>Rider is moving!</b>').openPopup();
+                const rider = L.marker(HQ_POS, { icon: mapIcon('rider', 40) }).addTo(map).bindPopup('<b>Rider is moving!</b>').openPopup();
                 let t = 0;
                 timer = setInterval(() => {
                   t = t >= 1 ? 0 : t + 0.005;
@@ -50,7 +53,7 @@ function TrackingMap({ order }) {
                 }, 100);
               } else {
                 setLabel(`Delivered safely to: ${order.customer.address}`);
-                L.marker(dest, { icon: emojiIcon('✅') }).addTo(map).bindPopup('<b>Delivered!</b>').openPopup();
+                L.marker(dest, { icon: mapIcon('done') }).addTo(map).bindPopup('<b>Delivered!</b>').openPopup();
               }
             });
           return () => {
@@ -104,12 +107,14 @@ function Result({ order }) {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 + i * 0.25, type: 'spring', stiffness: 260, damping: 18 }}
             >
-              <span className="tl-dot">{i < idx ? '✓' : s.icon}</span>
+              <span className="tl-dot">{i < idx ? <Check size={20} strokeWidth={2.5} /> : createElement(STATUS_ICONS[s.id], { size: 20 })}</span>
               <span className="tl-label">{s.label}</span>
             </motion.div>
           ))}
         </div>
-        <p className="est">⏱️ Estimated: {order.estimatedTime}</p>
+        <p className="est">
+          <Timer size={16} /> Estimated: {order.estimatedTime}
+        </p>
 
         <div className="tr-details">
           <div>
@@ -119,7 +124,7 @@ function Result({ order }) {
           </div>
           <div>
             <h4>Delivery method</h4>
-            <p>{order.deliveryMethod === 'delivery' ? '🏠 Home delivery' : '🏪 Pickup'}</p>
+            <p>{order.deliveryMethod === 'delivery' ? 'Home delivery' : 'Pickup'}</p>
             <span className="muted">{order.customer.address || 'Pickup in store'}</span>
           </div>
         </div>
@@ -179,7 +184,7 @@ export default function Tracking() {
             className="mono"
           />
           <motion.button className="btn btn-primary" onClick={track} whileTap={{ scale: 0.93 }}>
-            Track 📦
+            Track
           </motion.button>
         </Reveal>
       </PageHeader>
@@ -191,7 +196,7 @@ export default function Tracking() {
             ) : query ? (
               <motion.div key="nf" className="empty-state" initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.7 }}>
                 <motion.span animate={{ rotate: [0, -15, 15, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                  🔍
+                  <Search size={56} strokeWidth={1.4} />
                 </motion.span>
                 <h3>Order not found</h3>
                 <p>We couldn't find an order with that code. Please check and try again.</p>

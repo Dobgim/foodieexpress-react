@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { createElement, useEffect, useState } from 'react';
+import { CircleCheck, CircleX, Info, TriangleAlert, UtensilsCrossed, X } from 'lucide-react';
 import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion';
 import { useStore } from '../context/StoreContext';
 import { ease } from './Motion';
@@ -21,7 +22,9 @@ export function PageTransition({ children }) {
         animate={{ scaleY: 0, originY: 0, transition: { duration: 0.7, ease, delay: 0.1 } }}
         exit={{ scaleY: 1, originY: 1, transition: { duration: 0.45, ease } }}
       >
-        <span className="curtain-logo">🍔</span>
+        <span className="curtain-logo">
+          <UtensilsCrossed size={52} strokeWidth={1.6} />
+        </span>
       </motion.div>
     </>
   );
@@ -47,7 +50,7 @@ export function Preloader() {
             animate={{ scale: [0, 1.25, 1], rotate: 0 }}
             transition={{ duration: 1, ease }}
           >
-            🍔
+            <UtensilsCrossed size={54} strokeWidth={1.8} />
           </motion.div>
           <motion.div
             className="preloader-name"
@@ -72,7 +75,7 @@ export function ScrollProgress() {
 
 export function Toasts() {
   const { toasts, dismissToast } = useStore();
-  const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+  const icons = { success: CircleCheck, error: CircleX, warning: TriangleAlert, info: Info };
   return (
     <div className="toast-container">
       <AnimatePresence>
@@ -86,10 +89,10 @@ export function Toasts() {
             exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.25 } }}
             transition={{ type: 'spring', stiffness: 380, damping: 26 }}
           >
-            <span>{icons[t.type]}</span>
+            <span className="toast-icon">{createElement(icons[t.type] || Info, { size: 20 })}</span>
             <span className="toast-message">{t.message}</span>
             <button className="toast-close" onClick={() => dismissToast(t.id)} aria-label="Dismiss">
-              ×
+              <X size={16} />
             </button>
           </motion.div>
         ))}

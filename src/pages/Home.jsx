@@ -1,6 +1,7 @@
 import { useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { ArrowRight, Star, Zap } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { CATEGORIES, unsplash } from '../lib/catalog';
 import { PageTransition } from '../components/Overlays';
@@ -54,12 +55,12 @@ function Hero() {
           <motion.div className="hero-actions" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: d + 0.85, duration: 0.8, ease }}>
             <Magnetic>
               <Link to="/menu" className="btn btn-primary btn-lg">
-                Order Now 🍕
+                Order now <ArrowRight size={18} />
               </Link>
             </Magnetic>
             <Magnetic>
               <Link to="/tracking" className="btn btn-ghost btn-lg">
-                Track Order 📦
+                Track an order
               </Link>
             </Magnetic>
           </motion.div>
@@ -117,7 +118,9 @@ function Hero() {
             animate={{ opacity: 1, scale: 1, x: 0, y: [0, -14, 0] }}
             transition={{ delay: d + 0.9, duration: 0.6, y: { duration: 4, repeat: Infinity, ease: 'easeInOut', delay: d + 1.3 } }}
           >
-            <span className="fc-icon green">🚀</span>
+            <span className="fc-icon green">
+              <Zap size={20} />
+            </span>
             <div>
               <strong>Fast Delivery</strong>
               <span>Under 30 minutes</span>
@@ -129,7 +132,9 @@ function Hero() {
             animate={{ opacity: 1, scale: 1, x: 0, y: [0, 14, 0] }}
             transition={{ delay: d + 1.1, duration: 0.6, y: { duration: 5, repeat: Infinity, ease: 'easeInOut', delay: d + 1.5 } }}
           >
-            <span className="fc-icon orange">⭐</span>
+            <span className="fc-icon orange">
+              <Star size={20} fill="currentColor" strokeWidth={0} />
+            </span>
             <div>
               <strong>Top Rated</strong>
               <span>Loved across Douala</span>
@@ -156,10 +161,9 @@ function Categories() {
               <Link to={`/menu?cat=${c.id}`} className="category-card">
                 <motion.img src={c.image} alt="" className="cat-bg" />
                 <div className="cat-shade" />
-                <span className="cat-icon">{c.icon}</span>
                 <div className="cat-text">
                   <div className="cat-name">{c.name}</div>
-                  <div className="cat-count">{products.filter((p) => p.category === c.id).length} items →</div>
+                  <div className="cat-count">{products.filter((p) => p.category === c.id).length} items <ArrowRight size={14} /></div>
                 </div>
               </Link>
             </RevealItem>
@@ -210,7 +214,7 @@ function Popular() {
         <Reveal variant="zoomIn" className="center mt-xl">
           <Magnetic>
             <Link to="/menu" className="btn btn-dark btn-lg">
-              View full menu →
+              View full menu <ArrowRight size={18} />
             </Link>
           </Magnetic>
         </Reveal>
@@ -224,9 +228,9 @@ function HowItWorks() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 80%', 'end 60%'] });
   const line = useSpring(scrollYProgress, { stiffness: 80, damping: 20 });
   const steps = [
-    ['🍽️', 'Browse menu', 'Explore our selection of meals, fast food, drinks and desserts.'],
-    ['🛒', 'Place order', 'Add items to your cart, choose delivery or pickup, and checkout.'],
-    ['🛵', 'Track & enjoy', 'Get a tracking code, follow your rider live on the map, and enjoy!'],
+    [unsplash('1600891964599-f61ba0e24092', 640, 480), 'Browse the menu', 'Explore meals, fast food, drinks and desserts from local kitchens.'],
+    [unsplash('1556742049-0cfed4f6a45d', 640, 480), 'Place your order', 'Add items to your cart, choose delivery or pickup, and pay at checkout.'],
+    [unsplash('1617347454431-f49d7ff5c3b1', 640, 480), 'Track and enjoy', 'Follow your rider live on the map until your food arrives.'],
   ];
   return (
     <section className="section how" ref={ref}>
@@ -236,12 +240,12 @@ function HowItWorks() {
           <div className="steps-line">
             <motion.div className="steps-line-fill" style={{ scaleX: line }} />
           </div>
-          {steps.map(([icon, title, text], i) => (
+          {steps.map(([photo, title, text], i) => (
             <Reveal key={title} variant="pop" delay={i * 0.18} className="step">
-              <motion.div className="step-icon" whileHover={{ scale: 1.2, rotate: 10 }}>
-                {icon}
+              <div className="step-photo">
+                <img src={photo} alt="" loading="lazy" />
                 <span className="step-num">{i + 1}</span>
-              </motion.div>
+              </div>
               <h3>{title}</h3>
               <p>{text}</p>
             </Reveal>
@@ -277,7 +281,7 @@ function Testimonials() {
           </RevealGroup>
         ) : (
           <Reveal variant="zoomIn" className="empty-reviews">
-            <span>⭐</span>
+            <Star size={44} strokeWidth={1.5} />
             <p>No reviews yet — be the first to tell us what you think.</p>
             <Link to="/reviews" className="btn btn-primary">
               Write a review
@@ -294,28 +298,26 @@ function CTA() {
     <section className="section">
       <div className="container cta-grid">
         <Reveal variant="zoomOut" className="cta-box red">
-          <motion.span className="cta-emoji" animate={{ rotate: [0, 12, -8, 0], scale: [1, 1.1, 1] }} transition={{ duration: 3, repeat: Infinity }}>
-            🍕
-          </motion.span>
+          <img className="cta-photo" src={unsplash('1534308983496-4fabb1a015ee', 900, 700)} alt="" loading="lazy" />
+          <div className="cta-shade" />
           <h2>Hungry? Order now!</h2>
           <p>
             Free delivery on your first order. Use code <strong>WELCOME</strong>
           </p>
           <Magnetic>
             <Link to="/menu" className="btn btn-light btn-lg">
-              Explore our menu 🍽️
+              Explore our menu
             </Link>
           </Magnetic>
         </Reveal>
         <Reveal variant="zoomOut" delay={0.15} className="cta-box gold">
-          <motion.span className="cta-emoji" animate={{ y: [0, -10, 0] }} transition={{ duration: 2.5, repeat: Infinity }}>
-            🏪
-          </motion.span>
+          <img className="cta-photo" src={unsplash('1517248135467-4c7edcad34c4', 900, 700)} alt="" loading="lazy" />
+          <div className="cta-shade" />
           <h2>Own a restaurant?</h2>
           <p>Join FoodieExpress as a vendor and reach thousands of hungry customers in your area.</p>
           <Magnetic>
             <Link to="/login#vendor" className="btn btn-light btn-lg">
-              Apply as vendor →
+              Apply as a vendor <ArrowRight size={18} />
             </Link>
           </Magnetic>
         </Reveal>
@@ -329,7 +331,7 @@ export default function Home() {
     <PageTransition>
       <Hero />
       <div className="ticker">
-        <Marquee items={['🍛 Suya platters', '🍔 Juicy burgers', '🍕 Wood-fired pizza', '🥤 Fresh juices', '🍰 Sweet treats', '🍗 Crispy chicken', '🛵 30-min delivery']} speed={35} />
+        <Marquee items={['Suya platters', 'Juicy burgers', 'Wood-fired pizza', 'Fresh juices', 'Sweet treats', 'Crispy chicken', '30-minute delivery']} speed={35} />
       </div>
       <Categories />
       <ZoomShowcase />
