@@ -1,8 +1,9 @@
 import { createElement, useEffect, useState } from 'react';
-import { CircleCheck, CircleX, Info, TriangleAlert, UtensilsCrossed, X } from 'lucide-react';
+import { CircleCheck, CircleX, Info, TriangleAlert, X } from 'lucide-react';
 import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion';
 import { useStore } from '../context/StoreContext';
 import { ease } from './Motion';
+import { LogoMark } from './Layout';
 
 /** Wraps each page: zooms the old page out and the new page in, with a sweeping curtain. */
 export function PageTransition({ children }) {
@@ -23,7 +24,7 @@ export function PageTransition({ children }) {
         exit={{ scaleY: 1, originY: 1, transition: { duration: 0.45, ease } }}
       >
         <span className="curtain-logo">
-          <UtensilsCrossed size={52} strokeWidth={1.6} />
+          <LogoMark size={110} />
         </span>
       </motion.div>
     </>
@@ -50,7 +51,7 @@ export function Preloader() {
             animate={{ scale: [0, 1.25, 1], rotate: 0 }}
             transition={{ duration: 1, ease }}
           >
-            <UtensilsCrossed size={54} strokeWidth={1.8} />
+            <LogoMark size={130} />
           </motion.div>
           <motion.div
             className="preloader-name"

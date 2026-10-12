@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-motion';
-import { Clock, Crown, Mail, MapPin, MessageCircle, Phone, Send, ShoppingBag, Store, User, UtensilsCrossed, X } from 'lucide-react';
+import { Clock, Crown, Mail, MapPin, MessageCircle, Phone, Send, ShoppingBag, Store, User, X } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { Reveal, RevealGroup, RevealItem, ease } from './Motion';
 
@@ -14,11 +14,28 @@ const LINKS = [
   ['/tracking', 'Track Order'],
 ];
 
+/** Brand mark: a serving cloche with speed lines. Drawn for a 64px red tile; the tile itself comes from CSS. */
+export function LogoMark({ size = 42 }) {
+  return (
+    <svg viewBox="0 0 64 64" width={size} height={size} aria-hidden="true">
+      <g fill="#fff">
+        <path d="M20 41a17 17 0 0 1 34 0z" />
+        <rect x="16" y="43.5" width="42" height="6" rx="3" />
+      </g>
+      <circle cx="37" cy="20.5" r="3.5" fill="#FFB703" />
+      <g stroke="#fff" strokeWidth="4" strokeLinecap="round">
+        <path d="M9 30h8" />
+        <path d="M6 37h9" />
+      </g>
+    </svg>
+  );
+}
+
 export function Logo() {
   return (
-    <Link to="/" className="logo">
+    <Link to="/" className="logo" aria-label="FoodieExpress home">
       <motion.span className="logo-icon" whileHover={{ rotate: [0, -15, 15, 0], scale: 1.15 }} transition={{ duration: 0.5 }}>
-        <UtensilsCrossed size={20} strokeWidth={2.2} />
+        <LogoMark />
       </motion.span>
       <span>
         Foodie<em>Express</em>

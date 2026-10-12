@@ -298,7 +298,6 @@ em {
   gap: 18px;
 }
 .preloader-logo {
-  font-size: 5rem;
   width: 130px;
   height: 130px;
   display: grid;
@@ -331,8 +330,8 @@ em {
   place-items: center;
   pointer-events: none;
 }
-.curtain-logo {
-  font-size: 4rem;
+.curtain-logo svg {
+  display: block;
 }
 
 .toast-container {
@@ -434,7 +433,8 @@ em {
   background: var(--primary);
   display: grid;
   place-items: center;
-  font-size: 1.3rem;
+  overflow: hidden;
+  flex-shrink: 0;
   box-shadow: var(--shadow-red);
 }
 .nav-links {
